@@ -90,9 +90,19 @@ h1{
     gap:14px;
     align-items:flex-start;
     box-shadow:0 10px 24px rgba(0,0,0,.06);
-    border-bottom:4px solid var(--brand);
     position:relative;
     overflow:hidden;
+}
+
+.theme-card::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:5px;
+    background:var(--brand);
+    z-index:3;
 }
 
 .theme-card::after{
@@ -119,7 +129,7 @@ h1{
     justify-content:center;
     flex:0 0 auto;
     position:relative;
-    z-index:3;
+    z-index:4;
 }
 
 .icon svg{
@@ -134,7 +144,7 @@ h1{
 
 .card-content{
     position:relative;
-    z-index:3;
+    z-index:4;
 }
 
 .card-title{
@@ -171,22 +181,6 @@ h1{
     background:rgba(255,255,255,.06);
 }
 
-.line{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:0;
-    height:5px;
-    background:var(--brand);
-    transform-origin:left;
-    animation:growLine 1.1s ease-out forwards;
-}
-
-@keyframes growLine{
-    from{transform:scaleX(0);}
-    to{transform:scaleX(1);}
-}
-
 @media(max-width:950px){
     .theme-grid{
         grid-template-columns:repeat(2,minmax(0,1fr));
@@ -219,8 +213,6 @@ h1{
     </div>
 
     <div class="theme-grid" id="themeGrid"></div>
-
-    <div class="line"></div>
 
 </section>
 
@@ -289,17 +281,50 @@ const defaultThemes = [
 
 const icons = {
     literacy:
-        '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path><path d="M8 7h8"></path><path d="M8 11h5"></path></svg>',
+        '<svg viewBox="0 0 24 24">' +
+        '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>' +
+        '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>' +
+        '<path d="M8 7h8"></path>' +
+        '<path d="M8 11h5"></path>' +
+        '</svg>',
+
     esdgc:
-        '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"></path><path d="M9 12l2 2 4-5"></path></svg>',
+        '<svg viewBox="0 0 24 24">' +
+        '<path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"></path>' +
+        '<path d="M9 12l2 2 4-5"></path>' +
+        '</svg>',
+
     diversity:
-        '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+        '<svg viewBox="0 0 24 24">' +
+        '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>' +
+        '<circle cx="9" cy="7" r="4"></circle>' +
+        '<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>' +
+        '<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>' +
+        '</svg>',
+
     digital:
-        '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 22h8"></path><path d="M12 18v4"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg>',
+        '<svg viewBox="0 0 24 24">' +
+        '<rect x="3" y="4" width="18" height="14" rx="2"></rect>' +
+        '<path d="M8 22h8"></path>' +
+        '<path d="M12 18v4"></path>' +
+        '<path d="M8 9h8"></path>' +
+        '<path d="M8 13h5"></path>' +
+        '</svg>',
+
     enterprise:
-        '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M3 12h18"></path><path d="M9 16l2 2 4-4"></path></svg>',
+        '<svg viewBox="0 0 24 24">' +
+        '<rect x="3" y="7" width="18" height="13" rx="2"></rect>' +
+        '<path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>' +
+        '<path d="M3 12h18"></path>' +
+        '<path d="M9 16l2 2 4-4"></path>' +
+        '</svg>',
+
     welsh:
-        '<svg viewBox="0 0 24 24"><path d="M4 21V5"></path><path d="M4 5c5-3 8 3 16 0v10c-8 3-11-3-16 0"></path><path d="M8 11c1.5-1 3.5-1 5 0"></path></svg>'
+        '<svg viewBox="0 0 24 24">' +
+        '<path d="M4 21V5"></path>' +
+        '<path d="M4 5c5-3 8 3 16 0v10c-8 3-11-3-16 0"></path>' +
+        '<path d="M8 11c1.5-1 3.5-1 5 0"></path>' +
+        '</svg>'
 };
 
 function getThemeParam(index, field, fallback){
