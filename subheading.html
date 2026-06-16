@@ -57,16 +57,27 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:1.6rem;
-    font-weight:900;
     position:relative;
     z-index:2;
     flex:0 0 auto;
 }
 
-.icon::after{
-    color:var(--brand);
-    line-height:1;
+.icon svg{
+    width:32px;
+    height:32px;
+    stroke:var(--brand);
+    fill:none;
+    stroke-width:2.4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.icon-symbol{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    height:100%;
 }
 
 .content{
@@ -106,73 +117,6 @@ h2{
     animation:growLine 1.1s ease-out forwards;
 }
 
-.presentation .icon::after{
-    content:"";
-    width:34px;
-    height:26px;
-    border:3px solid var(--brand);
-    border-radius:2px;
-    position:absolute;
-    top:13px;
-    left:12px;
-}
-
-.presentation .icon::before{
-    content:"";
-    position:absolute;
-    width:20px;
-    height:3px;
-    background:var(--brand);
-    left:19px;
-    bottom:12px;
-    box-shadow:
-        -6px 7px 0 -1px var(--brand),
-        6px 7px 0 -1px var(--brand);
-}
-
-.activities .icon::after{
-    content:"✓";
-}
-
-.resources .icon::after{
-    content:"📁";
-    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
-}
-
-.task .icon::after{
-    content:"📝";
-    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
-}
-
-.support .icon::after{
-    content:"💬";
-    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
-}
-
-.video .icon::after{
-    content:"▶";
-}
-
-.code .icon::after{
-    content:"</>";
-    font-family:Consolas, monospace;
-    font-size:1.25rem;
-}
-
-.link .icon::after{
-    content:"🔗";
-    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
-}
-
-.upload .icon::after{
-    content:"⬆";
-}
-
-.reading .icon::after{
-    content:"📖";
-    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
-}
-
 @keyframes growLine{
     from{
         transform:scaleX(0);
@@ -190,20 +134,11 @@ h2{
     .icon{
         width:48px;
         height:48px;
-        font-size:1.2rem;
     }
 
-    .presentation .icon::after{
+    .icon svg{
         width:28px;
-        height:22px;
-        top:11px;
-        left:10px;
-    }
-
-    .presentation .icon::before{
-        width:16px;
-        left:16px;
-        bottom:9px;
+        height:28px;
     }
 }
 </style>
@@ -213,7 +148,9 @@ h2{
 
 <section id="subheading" class="subheading activities">
 
-    <div class="icon" aria-hidden="true"></div>
+    <div class="icon" aria-hidden="true">
+        <div class="icon-symbol" id="iconSymbol"></div>
+    </div>
 
     <div class="content">
         <div class="kicker" id="kicker">Course Section</div>
@@ -240,6 +177,76 @@ const allowedTypes = [
     "reading"
 ];
 
+const icons = {
+    presentation:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<rect x="3" y="4" width="18" height="12" rx="1"></rect>' +
+        '<path d="M8 20h8"></path>' +
+        '<path d="M12 16v4"></path>' +
+        '<path d="M8 9h8"></path>' +
+        '<path d="M8 12h5"></path>' +
+        '</svg>',
+
+    activities:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M20 6L9 17l-5-5"></path>' +
+        '</svg>',
+
+    resources:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>' +
+        '</svg>',
+
+    task:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>' +
+        '<path d="M14 3v6h6"></path>' +
+        '<path d="M9 15l2 2 4-5"></path>' +
+        '</svg>',
+
+    support:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-6a8 8 0 1 1 18-5z"></path>' +
+        '<path d="M8 12h.01"></path>' +
+        '<path d="M12 12h.01"></path>' +
+        '<path d="M16 12h.01"></path>' +
+        '</svg>',
+
+    video:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<rect x="3" y="5" width="18" height="14" rx="2"></rect>' +
+        '<path d="M10 9l5 3-5 3z"></path>' +
+        '</svg>',
+
+    code:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M8 9l-4 3 4 3"></path>' +
+        '<path d="M16 9l4 3-4 3"></path>' +
+        '<path d="M14 5l-4 14"></path>' +
+        '</svg>',
+
+    link:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L11 4.93"></path>' +
+        '<path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07L13 19.07"></path>' +
+        '</svg>',
+
+    upload:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>' +
+        '<path d="M17 8l-5-5-5 5"></path>' +
+        '<path d="M12 3v12"></path>' +
+        '</svg>',
+
+    reading:
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>' +
+        '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>' +
+        '<path d="M8 6h8"></path>' +
+        '<path d="M8 10h8"></path>' +
+        '</svg>'
+};
+
 const type = allowedTypes.includes(params.get("type"))
     ? params.get("type")
     : "activities";
@@ -252,6 +259,9 @@ if(colour && /^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(colour)){
 
 document.getElementById("subheading").className =
     "subheading " + type;
+
+document.getElementById("iconSymbol").innerHTML =
+    icons[type] || icons.activities;
 
 function setTitle(value){
     if(!value) return;
