@@ -136,12 +136,15 @@ h1{
     left:0;
     width:200%;
     height:100%;
-    animation:waveMove 9s linear infinite;
+    animation:waveMove 18s linear infinite;
+    will-change:transform;
+    transform:translate3d(0,0,0);
+    backface-visibility:hidden;
 }
 
 .wave svg:nth-child(2){
     opacity:.65;
-    animation-duration:13s;
+    animation-duration:26s;
     animation-direction:reverse;
 }
 
@@ -313,17 +316,16 @@ h1{
 
 .reset-animations .icon,
 .reset-animations .icon::before,
-.reset-animations .icon::after,
-.reset-animations .wave svg{
+.reset-animations .icon::after{
     animation:none !important;
 }
 
 @keyframes waveMove{
     from{
-        transform:translateX(0);
+        transform:translate3d(0,0,0);
     }
     to{
-        transform:translateX(-50%);
+        transform:translate3d(-50%,0,0);
     }
 }
 
@@ -391,14 +393,12 @@ h1{
         </div>
 
         <div class="wave" aria-hidden="true">
-            <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
-                <path class="brand" d="M0,38 C120,30 240,30 360,38 C480,46 600,46 720,38 C840,30 960,30 1080,38 C1200,46 1320,46 1440,38 L1440,80 L0,80 Z"></path>
-                <path class="brand" d="M1440,38 C1560,30 1680,30 1800,38 C1920,46 2040,46 2160,38 C2280,30 2400,30 2520,38 C2640,46 2760,46 2880,38 L2880,80 L1440,80 Z"></path>
+            <svg viewBox="0 0 2880 80" preserveAspectRatio="none">
+                <path class="brand" d="M0,38 C120,30 240,30 360,38 C480,46 600,46 720,38 C840,30 960,30 1080,38 C1200,46 1320,46 1440,38 C1560,30 1680,30 1800,38 C1920,46 2040,46 2160,38 C2280,30 2400,30 2520,38 C2640,46 2760,46 2880,38 L2880,80 L0,80 Z"></path>
             </svg>
 
-            <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
-                <path class="soft" d="M0,48 C120,40 240,40 360,48 C480,56 600,56 720,48 C840,40 960,40 1080,48 C1200,56 1320,56 1440,48 L1440,80 L0,80 Z"></path>
-                <path class="soft" d="M1440,48 C1560,40 1680,40 1800,48 C1920,56 2040,56 2160,48 C2280,40 2400,40 2520,48 C2640,56 2760,56 2880,48 L2880,80 L1440,80 Z"></path>
+            <svg viewBox="0 0 2880 80" preserveAspectRatio="none">
+                <path class="soft" d="M0,48 C120,40 240,40 360,48 C480,56 600,56 720,48 C840,40 960,40 1080,48 C1200,56 1320,56 1440,48 C1560,40 1680,40 1800,48 C1920,56 2040,56 2160,48 C2280,40 2400,40 2520,48 C2640,56 2760,56 2880,48 L2880,80 L0,80 Z"></path>
             </svg>
         </div>
 
@@ -499,8 +499,6 @@ function applyDynamicColourSupport(){
         icon.style.borderColor = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.45)";
         icon.style.background = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.05)";
     });
-
-    document.querySelectorAll(".icon::before");
 }
 
 applyDynamicColourSupport();
@@ -559,7 +557,7 @@ function sendHeightToMoodle(){
 
 let resizeTimer = null;
 
-function resetAnimations(){
+function resetIconAnimations(){
     banner.classList.add("reset-animations");
 
     window.requestAnimationFrame(function(){
@@ -574,13 +572,13 @@ function handleResize(){
     clearTimeout(resizeTimer);
 
     resizeTimer = setTimeout(function(){
-        resetAnimations();
+        resetIconAnimations();
         sendHeightToMoodle();
     }, 150);
 }
 
 window.addEventListener("load", function(){
-    resetAnimations();
+    resetIconAnimations();
     sendHeightToMoodle();
 });
 
