@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Moodle Lesson Banner</title>
+
 <style>
 :root{
     --brand:#ec1d51;
@@ -87,11 +88,12 @@ h1{
     width:112px;
     height:112px;
     justify-self:end;
+    margin-right:24px;
     display:flex;
     align-items:center;
     justify-content:center;
-    border:1px solid color-mix(in srgb, var(--brand) 45%, transparent);
-    background:color-mix(in srgb, var(--brand) 5%, transparent);
+    border:1px solid rgba(236,29,81,.45);
+    background:rgba(236,29,81,.05);
     position:relative;
     animation:iconFloat 4s ease-in-out infinite;
 }
@@ -101,7 +103,7 @@ h1{
     content:"";
     position:absolute;
     inset:-14px;
-    border:1px solid color-mix(in srgb, var(--brand) 35%, transparent);
+    border:1px solid rgba(236,29,81,.35);
     animation:iconPulse 3s ease-in-out infinite;
 }
 
@@ -216,11 +218,12 @@ h1{
 
 .practical .icon-symbol::before{
     content:"</>";
+    font-family:Consolas, monospace;
 }
 
 .assignment .icon-symbol::before{
     content:"✓";
-    font-family:"Segoe UI",Arial,sans-serif;
+    font-family:"Segoe UI", Arial, sans-serif;
 }
 
 .assessment .icon-symbol::before{
@@ -230,6 +233,81 @@ h1{
 
 .resources .icon-symbol::before{
     content:"📁";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.revision .icon-symbol::before{
+    content:"🔄";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.exam .icon-symbol::before{
+    content:"📝";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.workshop .icon-symbol::before{
+    content:"🛠️";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.lab .icon-symbol::before{
+    content:"⚗️";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.research .icon-symbol::before{
+    content:"🔍";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.discussion .icon-symbol::before{
+    content:"💬";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.groupwork .icon-symbol::before{
+    content:"👥";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.project .icon-symbol::before{
+    content:"🚀";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.video .icon-symbol::before{
+    content:"▶️";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.reading .icon-symbol::before{
+    content:"📖";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.challenge .icon-symbol::before{
+    content:"🏆";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.starter .icon-symbol::before{
+    content:"⚡";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.reflection .icon-symbol::before{
+    content:"💡";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.coding .icon-symbol::before{
+    content:"💻";
+    font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+
+.quiz .icon-symbol::before{
+    content:"❓";
     font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;
 }
 
@@ -353,7 +431,22 @@ const allowedThemes = [
     "practical",
     "assignment",
     "assessment",
-    "resources"
+    "resources",
+    "revision",
+    "exam",
+    "workshop",
+    "lab",
+    "research",
+    "discussion",
+    "groupwork",
+    "project",
+    "video",
+    "reading",
+    "challenge",
+    "starter",
+    "reflection",
+    "coding",
+    "quiz"
 ];
 
 const theme = allowedThemes.includes(params.get("theme"))
@@ -373,6 +466,44 @@ const requestedColour = params.get("colour");
 if(requestedColour && isValidHexColour(requestedColour)){
     document.documentElement.style.setProperty("--brand", requestedColour);
 }
+
+function hexToRgb(hex){
+    let clean = hex.replace("#","");
+
+    if(clean.length === 3){
+        clean = clean
+            .split("")
+            .map(function(char){
+                return char + char;
+            })
+            .join("");
+    }
+
+    const number = parseInt(clean, 16);
+
+    return {
+        r:(number >> 16) & 255,
+        g:(number >> 8) & 255,
+        b:number & 255
+    };
+}
+
+function applyDynamicColourSupport(){
+    const brandValue = getComputedStyle(document.documentElement)
+        .getPropertyValue("--brand")
+        .trim();
+
+    const rgb = hexToRgb(brandValue);
+
+    document.querySelectorAll(".icon").forEach(function(icon){
+        icon.style.borderColor = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.45)";
+        icon.style.background = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.05)";
+    });
+
+    document.querySelectorAll(".icon::before");
+}
+
+applyDynamicColourSupport();
 
 function setText(id, value){
     if(value){
@@ -404,10 +535,12 @@ if(aims){
 
     aims
         .split("|")
-        .map(item => item.trim())
+        .map(function(item){
+            return item.trim();
+        })
         .filter(Boolean)
         .slice(0,6)
-        .forEach((item,index) => {
+        .forEach(function(item,index){
             const li = document.createElement("li");
             li.setAttribute("data-number", index + 1);
             li.textContent = item;
