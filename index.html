@@ -90,8 +90,8 @@ h1{
     display:flex;
     align-items:center;
     justify-content:center;
-    border:1px solid rgba(236,29,81,.45);
-    background:rgba(236,29,81,.05);
+    border:1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+    background:color-mix(in srgb, var(--brand) 5%, transparent);
     position:relative;
     animation:iconFloat 4s ease-in-out infinite;
 }
@@ -101,7 +101,7 @@ h1{
     content:"";
     position:absolute;
     inset:-14px;
-    border:1px solid rgba(236,29,81,.35);
+    border:1px solid color-mix(in srgb, var(--brand) 35%, transparent);
     animation:iconPulse 3s ease-in-out infinite;
 }
 
@@ -143,7 +143,7 @@ h1{
     animation-direction:reverse;
 }
 
-.wave path.red{
+.wave path.brand{
     fill:var(--brand);
 }
 
@@ -292,6 +292,7 @@ h1{
 }
 </style>
 </head>
+
 <body>
 
 <div id="banner" class="banner-wrapper practical">
@@ -313,8 +314,8 @@ h1{
 
         <div class="wave" aria-hidden="true">
             <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
-                <path class="red" d="M0,38 C120,30 240,30 360,38 C480,46 600,46 720,38 C840,30 960,30 1080,38 C1200,46 1320,46 1440,38 L1440,80 L0,80 Z"></path>
-                <path class="red" d="M1440,38 C1560,30 1680,30 1800,38 C1920,46 2040,46 2160,38 C2280,30 2400,30 2520,38 C2640,46 2760,46 2880,38 L2880,80 L1440,80 Z"></path>
+                <path class="brand" d="M0,38 C120,30 240,30 360,38 C480,46 600,46 720,38 C840,30 960,30 1080,38 C1200,46 1320,46 1440,38 L1440,80 L0,80 Z"></path>
+                <path class="brand" d="M1440,38 C1560,30 1680,30 1800,38 C1920,46 2040,46 2160,38 C2280,30 2400,30 2520,38 C2640,46 2760,46 2880,38 L2880,80 L1440,80 Z"></path>
             </svg>
 
             <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
@@ -362,6 +363,16 @@ const theme = allowedThemes.includes(params.get("theme"))
 const banner = document.getElementById("banner");
 
 banner.className = "banner-wrapper " + theme;
+
+function isValidHexColour(value){
+    return /^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(value);
+}
+
+const requestedColour = params.get("colour");
+
+if(requestedColour && isValidHexColour(requestedColour)){
+    document.documentElement.style.setProperty("--brand", requestedColour);
+}
 
 function setText(id, value){
     if(value){
