@@ -652,7 +652,10 @@ if(requestedColour && isValidHexColour(requestedColour)){
 
     const rgb = hexToRgb(requestedColour);
 
-    document.documentElement.style.setProperty("--brand-rgb", rgb.r + "," + rgb.g + "," + rgb.b);
+    document.documentElement.style.setProperty(
+        "--brand-rgb",
+        rgb.r + "," + rgb.g + "," + rgb.b
+    );
 }
 
 function setText(id, value){
@@ -685,30 +688,27 @@ function isUsefulText(value){
         .replace(/_/g,"")
         .replace(/\s+/g,"");
 
-    if(cleaned === ""){
-        return false;
+    return !(
+        cleaned === "" ||
+        cleaned === "n/a" ||
+        cleaned === "na" ||
+        cleaned === "notapplicable"
+    );
+}
+
+function removeObjectivesSection(){
+    if(objectivesSection && objectivesSection.parentNode){
+        objectivesSection.parentNode.removeChild(objectivesSection);
     }
 
-    if(cleaned === "n/a"){
-        return false;
-    }
-
-    if(cleaned === "na"){
-        return false;
-    }
-
-    if(cleaned === "notapplicable"){
-        return false;
-    }
-
-    return true;
+    banner.classList.add("no-objectives");
 }
 
 function updateAims(){
     const aims = params.get("aims");
 
     if(!aims){
-        objectivesSection.style.display = "none";
+        removeObjectivesSection();
         return;
     }
 
@@ -721,20 +721,36 @@ function updateAims(){
         .slice(0,6);
 
     if(validAims.length === 0){
-        objectivesSection.style.display = "none";
+        removeObjectivesSection();
         return;
     }
 
-    objectivesSection.style.display = "";
-    aimList.innerHTML = "";
+    if(aimList){
+        aimList.innerHTML = "";
 
-    validAims.forEach(function(item,index){
-        const li = document.createElement("li");
+        validAims.forEach(function(item,index){
+            const li = document.createElement("li");
 
-        li.setAttribute("data-number", index + 1);
-        li.textContent = item;
+            li.setAttribute("data-number", index + 1);
+            li.textContent = item;
 
-        aimList.appendChild(li);
+            aimList.appendChild(li);
+        });
+    }
+}
+
+function sendHeightToMoodle(){
+    requestAnimationFrame(function(){
+
+        const height = Math.ceil(
+            document.documentElement.scrollHeight
+        );
+
+        window.parent.postMessage({
+            type:"moodle-banner-height",
+            height:height
+        }, "*");
+
     });
 }
 
@@ -744,16 +760,9 @@ setText("aimsHeading", params.get("aimsHeading"));
 setTitle(params.get("title"));
 updateAims();
 
-function sendHeightToMoodle(){
-    requestAnimationFrame(function(){
-        const height = Math.ceil(banner.scrollHeight);
-
-        window.parent.postMessage({
-            type:"moodle-banner-height",
-            height:height
-        }, "*");
-    });
-}
+requestAnimationFrame(function(){
+    requestAnimationFrame(sendHeightToMoodle);
+});
 
 let resizeTimer = null;
 
@@ -778,8 +787,13 @@ function handleResize(){
 }
 
 window.addEventListener("load", function(){
+
     resetIconAnimations();
-    sendHeightToMoodle();
+
+    requestAnimationFrame(function(){
+        requestAnimationFrame(sendHeightToMoodle);
+    });
+
 });
 
 window.addEventListener("resize", handleResize);
