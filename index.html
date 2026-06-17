@@ -545,7 +545,7 @@ h1{
 
     </section>
 
-    <section class="objectives">
+    <section class="objectives" id="objectivesSection">
 
         <div class="objectives-kicker">Aims &amp; Objectives</div>
 
@@ -614,6 +614,8 @@ const iconStyle = allowedIconStyles.includes(params.get("iconStyle"))
 
 const banner = document.getElementById("banner");
 const iconBox = document.getElementById("iconBox");
+const objectivesSection = document.getElementById("objectivesSection");
+const aimList = document.getElementById("aimList");
 
 banner.className = "banner-wrapper " + theme;
 iconBox.className = "icon icon-style-" + iconStyle;
@@ -670,39 +672,87 @@ function setTitle(value){
         safe.replace(/\[(.*?)\]/g,'<span class="highlight">$1</span>');
 }
 
-setText("kicker", params.get("kicker"));
-setText("subtitle", params.get("subtitle"));
-setText("aimsHeading", params.get("aimsHeading"));
-setTitle(params.get("title"));
+function isUsefulText(value){
+    if(!value){
+        return false;
+    }
 
-const aims = params.get("aims");
+    const cleaned = value
+        .trim()
+        .toLowerCase()
+        .replace(/\./g,"")
+        .replace(/-/g,"")
+        .replace(/_/g,"")
+        .replace(/\s+/g,"");
 
-if(aims){
-    const aimList = document.getElementById("aimList");
-    aimList.innerHTML = "";
+    if(cleaned === ""){
+        return false;
+    }
 
-    aims
+    if(cleaned === "n/a"){
+        return false;
+    }
+
+    if(cleaned === "na"){
+        return false;
+    }
+
+    if(cleaned === "notapplicable"){
+        return false;
+    }
+
+    return true;
+}
+
+function updateAims(){
+    const aims = params.get("aims");
+
+    if(!aims){
+        objectivesSection.style.display = "none";
+        return;
+    }
+
+    const validAims = aims
         .split("|")
         .map(function(item){
             return item.trim();
         })
-        .filter(Boolean)
-        .slice(0,6)
-        .forEach(function(item,index){
-            const li = document.createElement("li");
-            li.setAttribute("data-number", index + 1);
-            li.textContent = item;
-            aimList.appendChild(li);
-        });
+        .filter(isUsefulText)
+        .slice(0,6);
+
+    if(validAims.length === 0){
+        objectivesSection.style.display = "none";
+        return;
+    }
+
+    objectivesSection.style.display = "";
+    aimList.innerHTML = "";
+
+    validAims.forEach(function(item,index){
+        const li = document.createElement("li");
+
+        li.setAttribute("data-number", index + 1);
+        li.textContent = item;
+
+        aimList.appendChild(li);
+    });
 }
 
-function sendHeightToMoodle(){
-    const height = Math.ceil(banner.getBoundingClientRect().height);
+setText("kicker", params.get("kicker"));
+setText("subtitle", params.get("subtitle"));
+setText("aimsHeading", params.get("aimsHeading"));
+setTitle(params.get("title"));
+updateAims();
 
-    window.parent.postMessage({
-        type:"moodle-banner-height",
-        height:height
-    }, "*");
+function sendHeightToMoodle(){
+    requestAnimationFrame(function(){
+        const height = Math.ceil(banner.scrollHeight);
+
+        window.parent.postMessage({
+            type:"moodle-banner-height",
+            height:height
+        }, "*");
+    });
 }
 
 let resizeTimer = null;
