@@ -10,6 +10,7 @@
     --brand:#ec1d51;
     --dark:#101014;
     --soft:#f5f5f7;
+    --brand-rgb:236,29,81;
 }
 
 *{
@@ -92,9 +93,10 @@ h1{
     display:flex;
     align-items:center;
     justify-content:center;
-    border:1px solid rgba(236,29,81,.45);
-    background:rgba(236,29,81,.05);
     position:relative;
+    color:var(--brand);
+    background:rgba(var(--brand-rgb),.05);
+    border:1px solid rgba(var(--brand-rgb),.45);
     animation:iconFloat 4s ease-in-out infinite;
 }
 
@@ -102,15 +104,7 @@ h1{
 .icon::after{
     content:"";
     position:absolute;
-    inset:-14px;
-    border:1px solid rgba(236,29,81,.35);
-    animation:iconPulse 3s ease-in-out infinite;
-}
-
-.icon::after{
-    inset:-28px;
-    opacity:.45;
-    animation-delay:.5s;
+    pointer-events:none;
 }
 
 .icon-symbol{
@@ -118,7 +112,198 @@ h1{
     font-size:3rem;
     font-weight:900;
     font-family:Consolas, monospace;
-    z-index:2;
+    z-index:4;
+}
+
+.icon-style-pulse::before{
+    inset:-14px;
+    border:1px solid rgba(var(--brand-rgb),.35);
+    animation:iconPulse 3s ease-in-out infinite;
+}
+
+.icon-style-pulse::after{
+    inset:-28px;
+    border:1px solid rgba(var(--brand-rgb),.25);
+    animation:iconPulse 3s ease-in-out infinite;
+    animation-delay:.5s;
+}
+
+.icon-style-orbit::before{
+    width:152px;
+    height:152px;
+    border:1px solid rgba(var(--brand-rgb),.35);
+    border-radius:50%;
+    animation:spin 8s linear infinite;
+}
+
+.icon-style-orbit::after{
+    width:10px;
+    height:10px;
+    background:var(--brand);
+    border-radius:50%;
+    top:-24px;
+    left:50%;
+    transform:translateX(-50%);
+    box-shadow:0 0 18px rgba(var(--brand-rgb),.9);
+    transform-origin:5px 80px;
+    animation:orbit 8s linear infinite;
+}
+
+.icon-style-scan::before{
+    inset:-16px;
+    border:1px solid rgba(var(--brand-rgb),.35);
+}
+
+.icon-style-scan::after{
+    left:-16px;
+    right:-16px;
+    height:3px;
+    background:linear-gradient(90deg, transparent, var(--brand), transparent);
+    top:0;
+    animation:scan 2.8s ease-in-out infinite;
+    box-shadow:0 0 18px rgba(var(--brand-rgb),.75);
+}
+
+.icon-style-corners{
+    border:0;
+    background:rgba(var(--brand-rgb),.04);
+}
+
+.icon-style-corners::before{
+    inset:-12px;
+    background:
+        linear-gradient(var(--brand),var(--brand)) left top/26px 2px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) left top/2px 26px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) right top/26px 2px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) right top/2px 26px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) left bottom/26px 2px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) left bottom/2px 26px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) right bottom/26px 2px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) right bottom/2px 26px no-repeat;
+    opacity:.85;
+    animation:cornerPulse 3s ease-in-out infinite;
+}
+
+.icon-style-brackets{
+    border:0;
+    background:rgba(var(--brand-rgb),.04);
+}
+
+.icon-style-brackets::before{
+    content:"[";
+    color:var(--brand);
+    font-size:7rem;
+    line-height:1;
+    left:-18px;
+    top:-10px;
+    opacity:.55;
+    animation:bracketLeft 3.4s ease-in-out infinite;
+}
+
+.icon-style-brackets::after{
+    content:"]";
+    color:var(--brand);
+    font-size:7rem;
+    line-height:1;
+    right:-18px;
+    top:-10px;
+    opacity:.55;
+    animation:bracketRight 3.4s ease-in-out infinite;
+}
+
+.icon-style-diamond{
+    border:0;
+    background:transparent;
+}
+
+.icon-style-diamond::before{
+    width:116px;
+    height:116px;
+    border:1px solid rgba(var(--brand-rgb),.5);
+    transform:rotate(45deg);
+    animation:diamondPulse 4s ease-in-out infinite;
+}
+
+.icon-style-diamond::after{
+    width:154px;
+    height:154px;
+    border:1px solid rgba(var(--brand-rgb),.25);
+    transform:rotate(45deg);
+    animation:diamondSpin 10s linear infinite;
+}
+
+.icon-style-radar{
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(var(--brand-rgb),.11), transparent 60%);
+}
+
+.icon-style-radar::before{
+    inset:-20px;
+    border:1px solid rgba(var(--brand-rgb),.35);
+    border-radius:50%;
+    background:
+        radial-gradient(circle, transparent 35%, rgba(var(--brand-rgb),.25) 36%, transparent 37%),
+        radial-gradient(circle, transparent 60%, rgba(var(--brand-rgb),.18) 61%, transparent 62%);
+}
+
+.icon-style-radar::after{
+    width:78px;
+    height:78px;
+    background:conic-gradient(from 0deg, rgba(var(--brand-rgb),.8), transparent 55%);
+    border-radius:50%;
+    opacity:.55;
+    animation:spin 3.6s linear infinite;
+}
+
+.icon-style-glow{
+    border:1px solid rgba(var(--brand-rgb),.6);
+    background:rgba(var(--brand-rgb),.08);
+    box-shadow:0 0 28px rgba(var(--brand-rgb),.35);
+    animation:glowPulse 3s ease-in-out infinite;
+}
+
+.icon-style-glow::before{
+    inset:-18px;
+    border:1px solid rgba(var(--brand-rgb),.22);
+    box-shadow:0 0 40px rgba(var(--brand-rgb),.2);
+}
+
+.icon-style-crosshair{
+    border-radius:50%;
+    background:rgba(var(--brand-rgb),.04);
+}
+
+.icon-style-crosshair::before{
+    inset:-20px;
+    border:1px solid rgba(var(--brand-rgb),.5);
+    border-radius:50%;
+    background:
+        linear-gradient(var(--brand),var(--brand)) center/100% 1px no-repeat,
+        linear-gradient(var(--brand),var(--brand)) center/1px 100% no-repeat;
+    opacity:.55;
+}
+
+.icon-style-crosshair::after{
+    width:12px;
+    height:12px;
+    border:2px solid var(--brand);
+    border-radius:50%;
+    animation:crosshairPing 2.8s ease-out infinite;
+}
+
+.icon-style-none{
+    border:0;
+    background:transparent;
+    animation:none;
+}
+
+.icon-style-solid{
+    border:0;
+    background:var(--brand);
+}
+
+.icon-style-solid .icon-symbol{
+    color:white;
 }
 
 .wave{
@@ -235,19 +420,13 @@ h1{
 .coding .icon-symbol::before{content:"💻";font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;}
 .quiz .icon-symbol::before{content:"❓";font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;}
 
-.reset-animations .icon,
-.reset-animations .icon::before,
-.reset-animations .icon::after{
+.reset-animations .icon{
     animation:none !important;
 }
 
 @keyframes waveMove{
-    from{
-        transform:translate3d(0,0,0);
-    }
-    to{
-        transform:translate3d(-1440px,0,0);
-    }
+    from{transform:translate3d(0,0,0);}
+    to{transform:translate3d(-1440px,0,0);}
 }
 
 @keyframes iconFloat{
@@ -256,14 +435,59 @@ h1{
 }
 
 @keyframes iconPulse{
-    0%,100%{
-        transform:scale(1);
-        opacity:.4;
-    }
-    50%{
-        transform:scale(1.12);
-        opacity:.8;
-    }
+    0%,100%{transform:scale(1);opacity:.4;}
+    50%{transform:scale(1.12);opacity:.8;}
+}
+
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+@keyframes orbit{
+    from{transform:translateX(-50%) rotate(0deg);}
+    to{transform:translateX(-50%) rotate(360deg);}
+}
+
+@keyframes scan{
+    0%,100%{top:-16px;opacity:0;}
+    15%,85%{opacity:1;}
+    50%{top:126px;}
+}
+
+@keyframes cornerPulse{
+    0%,100%{opacity:.45;transform:scale(.96);}
+    50%{opacity:1;transform:scale(1.04);}
+}
+
+@keyframes bracketLeft{
+    0%,100%{transform:translateX(0);opacity:.35;}
+    50%{transform:translateX(-7px);opacity:.75;}
+}
+
+@keyframes bracketRight{
+    0%,100%{transform:translateX(0);opacity:.35;}
+    50%{transform:translateX(7px);opacity:.75;}
+}
+
+@keyframes diamondPulse{
+    0%,100%{opacity:.45;transform:rotate(45deg) scale(.95);}
+    50%{opacity:.9;transform:rotate(45deg) scale(1.05);}
+}
+
+@keyframes diamondSpin{
+    from{transform:rotate(45deg);}
+    to{transform:rotate(405deg);}
+}
+
+@keyframes glowPulse{
+    0%,100%{box-shadow:0 0 20px rgba(var(--brand-rgb),.22);}
+    50%{box-shadow:0 0 42px rgba(var(--brand-rgb),.55);}
+}
+
+@keyframes crosshairPing{
+    0%{transform:scale(.65);opacity:1;}
+    100%{transform:scale(3.4);opacity:0;}
 }
 
 @media(max-width:800px){
@@ -304,7 +528,7 @@ h1{
                 <p class="subtitle" id="subtitle">A hands-on session built for this class.</p>
             </div>
 
-            <div class="icon" aria-hidden="true">
+            <div id="iconBox" class="icon icon-style-pulse" aria-hidden="true">
                 <div class="icon-symbol"></div>
             </div>
         </div>
@@ -366,22 +590,36 @@ const allowedThemes = [
     "quiz"
 ];
 
+const allowedIconStyles = [
+    "pulse",
+    "orbit",
+    "scan",
+    "corners",
+    "brackets",
+    "diamond",
+    "radar",
+    "glow",
+    "crosshair",
+    "none",
+    "solid"
+];
+
 const theme = allowedThemes.includes(params.get("theme"))
     ? params.get("theme")
     : "practical";
 
+const iconStyle = allowedIconStyles.includes(params.get("iconStyle"))
+    ? params.get("iconStyle")
+    : "pulse";
+
 const banner = document.getElementById("banner");
+const iconBox = document.getElementById("iconBox");
 
 banner.className = "banner-wrapper " + theme;
+iconBox.className = "icon icon-style-" + iconStyle;
 
 function isValidHexColour(value){
     return /^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(value);
-}
-
-const requestedColour = params.get("colour");
-
-if(requestedColour && isValidHexColour(requestedColour)){
-    document.documentElement.style.setProperty("--brand", requestedColour);
 }
 
 function hexToRgb(hex){
@@ -405,20 +643,15 @@ function hexToRgb(hex){
     };
 }
 
-function applyDynamicColourSupport(){
-    const brandValue = getComputedStyle(document.documentElement)
-        .getPropertyValue("--brand")
-        .trim();
+const requestedColour = params.get("colour");
 
-    const rgb = hexToRgb(brandValue);
+if(requestedColour && isValidHexColour(requestedColour)){
+    document.documentElement.style.setProperty("--brand", requestedColour);
 
-    document.querySelectorAll(".icon").forEach(function(icon){
-        icon.style.borderColor = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.45)";
-        icon.style.background = "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.05)";
-    });
+    const rgb = hexToRgb(requestedColour);
+
+    document.documentElement.style.setProperty("--brand-rgb", rgb.r + "," + rgb.g + "," + rgb.b);
 }
-
-applyDynamicColourSupport();
 
 function setText(id, value){
     if(value){
