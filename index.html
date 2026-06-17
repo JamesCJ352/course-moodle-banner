@@ -36,6 +36,14 @@ body{
     background:var(--soft);
 }
 
+.banner-wrapper.no-objectives{
+    background:transparent;
+}
+
+.banner-wrapper.no-objectives .hero{
+    min-height:auto;
+}
+
 .hero{
     position:relative;
     min-height:185px;
@@ -568,40 +576,14 @@ h1{
 const params = new URLSearchParams(window.location.search);
 
 const allowedThemes = [
-    "theory",
-    "practical",
-    "assignment",
-    "assessment",
-    "resources",
-    "revision",
-    "exam",
-    "workshop",
-    "lab",
-    "research",
-    "discussion",
-    "groupwork",
-    "project",
-    "video",
-    "reading",
-    "challenge",
-    "starter",
-    "reflection",
-    "coding",
-    "quiz"
+    "theory","practical","assignment","assessment","resources","revision",
+    "exam","workshop","lab","research","discussion","groupwork","project",
+    "video","reading","challenge","starter","reflection","coding","quiz"
 ];
 
 const allowedIconStyles = [
-    "pulse",
-    "orbit",
-    "scan",
-    "corners",
-    "brackets",
-    "diamond",
-    "radar",
-    "glow",
-    "crosshair",
-    "none",
-    "solid"
+    "pulse","orbit","scan","corners","brackets","diamond",
+    "radar","glow","crosshair","none","solid"
 ];
 
 const theme = allowedThemes.includes(params.get("theme"))
@@ -628,15 +610,12 @@ function hexToRgb(hex){
     let clean = hex.replace("#","");
 
     if(clean.length === 3){
-        clean = clean
-            .split("")
-            .map(function(char){
-                return char + char;
-            })
-            .join("");
+        clean = clean.split("").map(function(char){
+            return char + char;
+        }).join("");
     }
 
-    const number = parseInt(clean, 16);
+    const number = parseInt(clean,16);
 
     return {
         r:(number >> 16) & 255,
@@ -658,7 +637,7 @@ if(requestedColour && isValidHexColour(requestedColour)){
     );
 }
 
-function setText(id, value){
+function setText(id,value){
     if(value){
         document.getElementById(id).textContent = value;
     }
@@ -676,9 +655,7 @@ function setTitle(value){
 }
 
 function isUsefulText(value){
-    if(!value){
-        return false;
-    }
+    if(!value) return false;
 
     const cleaned = value
         .trim()
@@ -725,32 +702,26 @@ function updateAims(){
         return;
     }
 
-    if(aimList){
-        aimList.innerHTML = "";
+    aimList.innerHTML = "";
 
-        validAims.forEach(function(item,index){
-            const li = document.createElement("li");
-
-            li.setAttribute("data-number", index + 1);
-            li.textContent = item;
-
-            aimList.appendChild(li);
-        });
-    }
+    validAims.forEach(function(item,index){
+        const li = document.createElement("li");
+        li.setAttribute("data-number", index + 1);
+        li.textContent = item;
+        aimList.appendChild(li);
+    });
 }
 
 function sendHeightToMoodle(){
     requestAnimationFrame(function(){
-
         const height = Math.ceil(
-            document.documentElement.scrollHeight
+            banner.getBoundingClientRect().height
         );
 
         window.parent.postMessage({
             type:"moodle-banner-height",
             height:height
-        }, "*");
-
+        },"*");
     });
 }
 
@@ -760,17 +731,13 @@ setText("aimsHeading", params.get("aimsHeading"));
 setTitle(params.get("title"));
 updateAims();
 
-requestAnimationFrame(function(){
-    requestAnimationFrame(sendHeightToMoodle);
-});
-
 let resizeTimer = null;
 
 function resetIconAnimations(){
     banner.classList.add("reset-animations");
 
-    window.requestAnimationFrame(function(){
-        window.requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
             banner.classList.remove("reset-animations");
             sendHeightToMoodle();
         });
@@ -783,30 +750,28 @@ function handleResize(){
     resizeTimer = setTimeout(function(){
         resetIconAnimations();
         sendHeightToMoodle();
-    }, 150);
+    },150);
 }
 
-window.addEventListener("load", function(){
-
+window.addEventListener("load",function(){
     resetIconAnimations();
-
-    requestAnimationFrame(function(){
-        requestAnimationFrame(sendHeightToMoodle);
-    });
-
+    sendHeightToMoodle();
 });
 
-window.addEventListener("resize", handleResize);
+window.addEventListener("resize",handleResize);
 
 if("ResizeObserver" in window){
-    const observer = new ResizeObserver(handleResize);
+    const observer = new ResizeObserver(function(){
+        sendHeightToMoodle();
+    });
+
     observer.observe(banner);
 }
 
-setTimeout(sendHeightToMoodle, 100);
-setTimeout(sendHeightToMoodle, 300);
-setTimeout(sendHeightToMoodle, 700);
-setTimeout(sendHeightToMoodle, 1500);
+setTimeout(sendHeightToMoodle,50);
+setTimeout(sendHeightToMoodle,150);
+setTimeout(sendHeightToMoodle,300);
+setTimeout(sendHeightToMoodle,700);
 </script>
 
 </body>
