@@ -123,6 +123,13 @@ h1{
     z-index:4;
 }
 
+.icon-symbol.custom-icon-symbol{
+    font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+    font-size:3.25rem;
+    font-weight:400;
+    line-height:1;
+}
+
 .icon-style-pulse::before{
     inset:-14px;
     border:1px solid rgba(var(--brand-rgb),.35);
@@ -428,6 +435,11 @@ h1{
 .coding .icon-symbol::before{content:"💻";font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;}
 .quiz .icon-symbol::before{content:"❓";font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;}
 
+.has-custom-icon .icon-symbol::before{
+    content:none !important;
+    display:none !important;
+}
+
 .reset-animations .icon{
     animation:none !important;
 }
@@ -573,363 +585,312 @@ h1{
 </div>
 
 <script>
-
 const params = new URLSearchParams(window.location.search);
 
 const allowedThemes = [
-
     "theory","practical","assignment","assessment","resources","revision",
-
     "exam","workshop","lab","research","discussion","groupwork","project",
-
     "video","reading","challenge","starter","reflection","coding","quiz"
-
 ];
 
 const allowedIconStyles = [
-
     "pulse","orbit","scan","corners","brackets","diamond",
-
     "radar","glow","crosshair","none","solid"
-
 ];
 
-const theme = allowedThemes.includes(params.get("theme"))
+const lessonTypeDescriptions = {
+    theory:"Theory-based session",
+    practical:"Practical skills session",
+    assignment:"Assignment preparation",
+    assessment:"Assessment activity",
+    resources:"Learning resources",
+    revision:"Revision and consolidation",
+    exam:"Exam preparation",
+    workshop:"Workshop activity",
+    lab:"Lab-based session",
+    research:"Research task",
+    discussion:"Discussion activity",
+    groupwork:"Collaborative group task",
+    project:"Project-based learning",
+    video:"Video-based learning",
+    reading:"Reading activity",
+    challenge:"Challenge task",
+    starter:"Starter activity",
+    reflection:"Reflection activity",
+    coding:"Coding activity",
+    quiz:"Quiz activity"
+};
 
-    ? params.get("theme")
+const rawLessonType = (params.get("theme") || "practical").trim();
+const normalisedLessonType = rawLessonType.toLowerCase();
 
+const isStandardLessonType =
+    allowedThemes.includes(normalisedLessonType);
+
+const theme = isStandardLessonType
+    ? normalisedLessonType
     : "practical";
 
 const iconStyle = allowedIconStyles.includes(params.get("iconStyle"))
-
     ? params.get("iconStyle")
-
     : "pulse";
 
 const banner = document.getElementById("banner");
-
 const iconBox = document.getElementById("iconBox");
-
+const iconSymbol = document.querySelector(".icon-symbol");
 const objectivesSection = document.getElementById("objectivesSection");
-
 const aimList = document.getElementById("aimList");
 
 banner.className = "banner-wrapper " + theme;
-
 iconBox.className = "icon icon-style-" + iconStyle;
 
 function isValidHexColour(value){
-
     return /^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(value);
-
 }
 
 function hexToRgb(hex){
-
     let clean = hex.replace("#","");
 
     if(clean.length === 3){
-
         clean = clean.split("").map(function(char){
-
             return char + char;
-
         }).join("");
-
     }
 
     const number = parseInt(clean,16);
 
     return {
-
         r:(number >> 16) & 255,
-
         g:(number >> 8) & 255,
-
         b:number & 255
-
     };
-
 }
 
 const requestedColour = params.get("colour");
 
 if(requestedColour && isValidHexColour(requestedColour)){
-
     document.documentElement.style.setProperty("--brand", requestedColour);
 
     const rgb = hexToRgb(requestedColour);
 
     document.documentElement.style.setProperty(
-
         "--brand-rgb",
-
         rgb.r + "," + rgb.g + "," + rgb.b
-
     );
-
 }
 
 function setText(id,value){
-
     if(value){
-
         document.getElementById(id).textContent = value;
-
     }
-
 }
 
 function setTitle(value){
-
     if(!value) return;
 
     const safe = value
-
         .replace(/</g,"&lt;")
-
         .replace(/>/g,"&gt;");
 
     document.getElementById("lessonTitle").innerHTML =
-
         safe.replace(/\[(.*?)\]/g,'<span class="highlight">$1</span>');
+}
 
+function isUsefulText(value){
+    if(!value) return false;
+
+    const cleaned = value
+        .trim()
+        .toLowerCase()
+        .replace(/\./g,"")
+        .replace(/-/g,"")
+        .replace(/_/g,"")
+        .replace(/\s+/g,"");
+
+    return !(
+        cleaned === "" ||
+        cleaned === "n/a" ||
+        cleaned === "na" ||
+        cleaned === "notapplicable"
+    );
+}
+
+function updateLessonTypeDisplay(){
+    if(!iconSymbol){
+        return;
+    }
+
+    if(isStandardLessonType){
+        banner.setAttribute(
+            "data-lesson-type",
+            normalisedLessonType
+        );
+
+        banner.setAttribute(
+            "data-lesson-description",
+            lessonTypeDescriptions[normalisedLessonType] || ""
+        );
+
+        return;
+    }
+
+    if(!isUsefulText(rawLessonType)){
+        banner.setAttribute(
+            "data-lesson-type",
+            "practical"
+        );
+
+        banner.setAttribute(
+            "data-lesson-description",
+            ""
+        );
+
+        return;
+    }
+
+    banner.classList.add("has-custom-icon");
+
+    iconSymbol.textContent = rawLessonType;
+    iconSymbol.classList.add("custom-icon-symbol");
+
+    banner.setAttribute(
+        "data-lesson-type",
+        "custom"
+    );
+
+    banner.setAttribute(
+        "data-lesson-description",
+        ""
+    );
 }
 
 function updateAimsKicker(){
-
     const aimsHeadingValue = params.get("aimsHeading") || "";
 
     const cleaned = aimsHeadingValue
-
         .trim()
-
         .toLowerCase()
-
         .replace(/\s+/g," ");
 
     const objectivesKicker = document.querySelector(".objectives-kicker");
 
     if(!objectivesKicker){
-
         return;
-
     }
 
     if(
-
         cleaned.includes("this section contains") ||
-
         cleaned.includes("section contains") ||
-
         cleaned.includes("this section includes") ||
-
         cleaned.includes("section includes")
-
     ){
-
         objectivesKicker.textContent = "Section Summary";
-
     } else {
-
         objectivesKicker.textContent = "Aims & Objectives";
-
     }
-
-}
-
-function isUsefulText(value){
-
-    if(!value) return false;
-
-    const cleaned = value
-
-        .trim()
-
-        .toLowerCase()
-
-        .replace(/\./g,"")
-
-        .replace(/-/g,"")
-
-        .replace(/_/g,"")
-
-        .replace(/\s+/g,"");
-
-    return !(
-
-        cleaned === "" ||
-
-        cleaned === "n/a" ||
-
-        cleaned === "na" ||
-
-        cleaned === "notapplicable"
-
-    );
-
 }
 
 function removeObjectivesSection(){
-
     if(objectivesSection && objectivesSection.parentNode){
-
         objectivesSection.parentNode.removeChild(objectivesSection);
-
     }
 
     banner.classList.add("no-objectives");
-
 }
 
 function updateAims(){
-
     const aims = params.get("aims");
 
     if(!aims){
-
         removeObjectivesSection();
-
         return;
-
     }
 
     const validAims = aims
-
         .split("|")
-
         .map(function(item){
-
             return item.trim();
-
         })
-
         .filter(isUsefulText)
-
         .slice(0,6);
 
     if(validAims.length === 0){
-
         removeObjectivesSection();
-
         return;
-
     }
 
     aimList.innerHTML = "";
 
     validAims.forEach(function(item,index){
-
         const li = document.createElement("li");
-
         li.setAttribute("data-number", index + 1);
-
         li.textContent = item;
-
         aimList.appendChild(li);
-
     });
-
 }
 
 function sendHeightToMoodle(){
-
     requestAnimationFrame(function(){
-
         const height = Math.ceil(
-
             banner.getBoundingClientRect().height
-
         );
 
         window.parent.postMessage({
-
             type:"moodle-banner-height",
-
             height:height
-
         },"*");
-
     });
-
 }
 
 setText("kicker", params.get("kicker"));
-
 setText("subtitle", params.get("subtitle"));
-
 setText("aimsHeading", params.get("aimsHeading"));
-
 updateAimsKicker();
-
 setTitle(params.get("title"));
-
+updateLessonTypeDisplay();
 updateAims();
 
 let resizeTimer = null;
 
 function resetIconAnimations(){
-
     banner.classList.add("reset-animations");
 
     requestAnimationFrame(function(){
-
         requestAnimationFrame(function(){
-
             banner.classList.remove("reset-animations");
-
             sendHeightToMoodle();
-
         });
-
     });
-
 }
 
 function handleResize(){
-
     clearTimeout(resizeTimer);
 
     resizeTimer = setTimeout(function(){
-
         resetIconAnimations();
-
         sendHeightToMoodle();
-
     },150);
-
 }
 
 window.addEventListener("load",function(){
-
     resetIconAnimations();
-
     sendHeightToMoodle();
-
 });
 
 window.addEventListener("resize",handleResize);
 
 if("ResizeObserver" in window){
-
     const observer = new ResizeObserver(function(){
-
         sendHeightToMoodle();
-
     });
 
     observer.observe(banner);
-
 }
 
 setTimeout(sendHeightToMoodle,50);
-
 setTimeout(sendHeightToMoodle,150);
-
 setTimeout(sendHeightToMoodle,300);
-
 setTimeout(sendHeightToMoodle,700);
-
 </script>
 
 </body>
