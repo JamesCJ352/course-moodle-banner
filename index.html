@@ -382,36 +382,42 @@ h1{
     margin:0;
     padding:0;
     display:grid;
-    grid-template-columns:repeat(3, minmax(0,1fr));
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:12px;
+    align-items:stretch;
 }
 
 .aim-list li{
     background:white;
-    min-height:58px;
-    padding:17px 18px 17px 52px;
-    position:relative;
+    padding:18px 20px;
     color:#15151a;
     font-size:.95rem;
     line-height:1.35;
     box-shadow:0 10px 24px rgba(0,0,0,.06);
+    display:flex;
+    align-items:center;
+    gap:16px;
 }
 
 .aim-list li::before{
     content:attr(data-number);
-    position:absolute;
-    left:16px;
-    top:15px;
-    width:24px;
-    height:24px;
+    flex:0 0 28px;
+    width:28px;
+    height:28px;
     border-radius:50%;
     background:var(--brand);
     color:white;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:.75rem;
+    font-size:.8rem;
     font-weight:900;
+    line-height:1;
+}
+
+.aim-list li span{
+    flex:1;
+    display:block;
 }
 
 .theory .icon-symbol::before{content:"📘";font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;}
